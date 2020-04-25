@@ -13,9 +13,16 @@ function App() {
     setUsername(target.value);
   };
 
-  const handleSubmit = async () => {
-    let gists = await githubAPI.getGists()
-      .then(res => setGists(res))
+  const handleSubmit = () => {
+    return githubAPI.getGists(username)
+      .then(res => {
+        console.log('res, ', res);
+        setGists(res);
+      })
+      .catch(err => {
+        console.log('catching error, ', err)
+        setGists([]);
+      })
   }
 
   const gistsList = gists.map((gist, index) => {

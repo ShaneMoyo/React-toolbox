@@ -1,12 +1,15 @@
 export default {
-  async getGists(username) {
+  getGists(username) {
     console.log(' api: ');
-    let gists = await fetch("https://api.github.com/users/shanemoyo/gists")
-      .then(res => res.json())
-      
-
-    console.log('gists api: ', gists)
-    return gists
+    return fetch(`https://api.github.com/users/${username}/gists`)
+      .then(res => {
+        console.log('res1: ', res)
+        if(res.status === 200) {
+          return res.json()
+        } else {
+          throw new Error("github api error");
+        }
+      })
   },
   getGistDetail() {
 
