@@ -23,16 +23,27 @@ function App() {
       })
       .catch(err => {
         console.log('catching error, ', err)
-        setGists([]);
+        setGists({});
       })
   }
 
-  const handleShowGistDetail = (key) => {
-    setGistDetail(key);
+  const handleShowGistDetail = (id) => {
+    return githubAPI.getGists(username)
+      .then(res => {
+        console.log('res, ', res);
+        setGists(res);
+      })
+      .catch(err => {
+        console.log('catching error, ', err)
+        setGists([]);
+      })
+    setGistDetail(id);
   }
 
-  const gistsList = gists.map((gist, index) => {
-    console.log('gist, index ', gist, index)
+  const gistsList = Object.entries(gists).map(entry => {
+    console.log('gist, index ', entry)
+    const gistID = entry[0];
+    const gist = entry[1];
     const date = moment(gist.created_at). format('YYYY-MM-DD');
     const files = gist.files;
     const fileList = Object.entries(files).map((file, index) => {
@@ -43,9 +54,9 @@ function App() {
       )
     })
     return (
-      <li className="gist" key={index} onClick={e => handleShowGistDetail(index)}>
+      <li className="gist" key={gistID} onClick={e => handleShowGistDetail(gistID)}>
         <a >{gist.description} - {date} </a>
-        {gistDetail ===  index ?
+        {gistDetail ===  gistID ?
           <ul>
             {fileList}
           </ul> : null
@@ -62,7 +73,7 @@ function App() {
         <p>Gists for: {username}</p>
         <input type="text" value={username} onChange={e => handleInput(e)}/>
         <input type="button" value="Get Gists..." onClick={handleSubmit}></input>
-        {gists.length ?
+        {Object.entries(gists).length ?
           <ul>
             {gistsList}
           </ul> : null
